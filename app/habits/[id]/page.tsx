@@ -2,8 +2,8 @@
 
 import { useState, use, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { 
-  ArrowLeft, Calendar as CalendarIcon, Zap, Clock, 
+import {
+  ArrowLeft, Calendar as CalendarIcon, Zap, Clock,
   CheckCircle2, Loader2, Trash2, AlertCircle
 } from 'lucide-react'
 import Link from 'next/link'
@@ -14,13 +14,13 @@ import { format } from 'date-fns'
 export default function HabitDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const router = useRouter()
-  
+
   // 1. Properly define all state hooks
   const [habit, setHabit] = useState<any>(null)
   const [goals, setGoals] = useState<any[]>([])
   const [selectedGoalId, setSelectedGoalId] = useState<string>("")
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date())
-  
+
   const [fetching, setFetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("") // Fixed the "Function not implemented" error
@@ -41,7 +41,7 @@ export default function HabitDetailPage({ params }: { params: Promise<{ id: stri
 
         const habitData = await habitRes.json()
         const goalsData = await goalsRes.json()
-        
+
         setHabit(habitData)
         setGoals(Array.isArray(goalsData) ? goalsData.filter((g: any) => g.status === 'active') : [])
       } catch (err: any) {
@@ -101,7 +101,7 @@ export default function HabitDetailPage({ params }: { params: Promise<{ id: stri
           <Link href="/dashboard" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-indigo-600 mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> Back to Base
           </Link>
-          
+
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
               <h1 className="text-5xl font-black text-slate-900 tracking-tighter uppercase italic">
@@ -118,14 +118,14 @@ export default function HabitDetailPage({ params }: { params: Promise<{ id: stri
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <HabitStat label="Cost / Unit" val={`$${habit.costPerUnit}`} icon={<Zap className="w-4 h-4" />} />
-                <HabitStat label="Time / Unit" val={`${habit.timePerUnit}m`} icon={<Clock className="w-4 h-4" />} />
-             </div>
-             {/* Add your charts here later */}
-             <div className="bg-white p-12 rounded-[2.5rem] border border-slate-200 border-dashed text-center">
-                <p className="text-xs font-black text-slate-300 uppercase tracking-widest">Visualization coming soon</p>
-             </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <HabitStat label="Cost / Unit" val={`$${habit.costPerUnit}`} icon={<Zap className="w-4 h-4" />} />
+              <HabitStat label="Time / Unit" val={`${habit.timePerUnit}m`} icon={<Clock className="w-4 h-4" />} />
+            </div>
+            {/* Add your charts here later */}
+            <div className="bg-white p-12 rounded-[2.5rem] border border-slate-200 border-dashed text-center">
+              <p className="text-xs font-black text-slate-300 uppercase tracking-widest">Visualization coming soon</p>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -136,18 +136,6 @@ export default function HabitDetailPage({ params }: { params: Promise<{ id: stri
               <div className="flex justify-center scale-90 md:scale-100">
                 <DayPicker mode="single" selected={selectedDay} onSelect={setSelectedDay} />
               </div>
-            </div>
-
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-sm">
-              <h3 className="text-xs font-black uppercase tracking-widest text-slate-400 mb-4">Target Objective</h3>
-              <select 
-                value={selectedGoalId}
-                onChange={(e) => setSelectedGoalId(e.target.value)}
-                className="w-full p-4 rounded-2xl bg-slate-50 border border-slate-100 font-bold text-sm outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
-              >
-                <option value="">General Savings</option>
-                {goals.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-              </select>
             </div>
           </div>
         </div>
