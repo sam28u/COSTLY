@@ -4,6 +4,28 @@ import { auth } from "@/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } },
+) {
+  const session = await auth();
+  if (!session?.user?.id) return new NextResponse("Unauthorized", { status: 401 });
+
+  const { id } = await params;
+  const goalId = parseInt(id);
+  const userId = session.user.id;
+
+  const [goal] = await db
+    .select()
+    .from(goals)
+    .where(and(eq(goals.id, goalId), eq(goals.userId, userId)))
+    .limit(1);
+
+  if (!goal) return new NextResponse("Goal not found", { status: 404 });
+
+  return NextResponse.json(goal);
+}
+
 // 1. ACHIEVE GOAL (POST)
 // Deducts from "Current Balance" but keeps "Total Saved" intact
 export async function POST(
